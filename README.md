@@ -25,6 +25,16 @@ Working through [Learn Go with Tests](https://quii.gitbook.io/learn-go-with-test
   - Slices of specific capacity can be initialised with the `make()` function e.g. `sums := make([]int, lengthOfNumbers)` (`make` has more arguments)
   - Append to slices with the `append()` function
 - A _variadic function_ takes a variable number of arguments of a given type, e.g. `func SomeFunc(nums ...int) {}` will take an indefinite number of int args (but is also equivalent to `func SomeFunc(nums []int) {}`)
+- A method is like a function in a class
+  - Method receivers are typically pointers, but watch out for pitfalls when calling the methods (sometimes you should declare things from structs with `&`)
+- Struct definition `type Something struct { SomeField int }`
+  - Struct declarations can use anonymous or named fields, e.g.
+  ```go
+  foo := Something{10}
+  bar := Something{SomeField: 10}
+  ```
+- In formatted strings, using `v` as an example, `%v` will show the value in default format and `%#v` will show the Go syntax representation of the value ([link](https://pkg.go.dev/fmt#hdr-Printing))
+- Interface definition `type Something interface { SomeMethod() int }`
 
 #### Test Types
 
@@ -44,6 +54,34 @@ func TestSomeFunc(t *testing.T) {
     // Another test against SomeFunc
   })
 }
+```
+
+- Can also be run in a _table-driven_ way
+
+```go
+  // An array of structs, each one a test case, is our table
+  areaTests := []struct {
+		name  string
+		shape Shape
+		want  float64
+	}{
+		{name: "Rectangle", shape: Rectangle{10.0, 10.0}, want: 10.0},
+		{name: "Circle", shape: Circle{10.0}, want: 314.1592653589793},
+		{name: "Triangle", shape: Triangle{12.0, 6.0}, want: 36.0},
+	}
+
+	for _, areaTest := range areaTests {
+    // Using t.Run() will list each test individually in the test output
+    // so we can see which one fails if it does
+		t.Run(areaTest.name, func(t *testing.T) {
+			got := areaTest.shape.Area()
+			if got != areaTest.want {
+				// %#v will print out the struct with its fields and values
+				// so if it fails we get detail
+				t.Errorf("%#v got %g, wanted %g", areaTest.shape, got, areaTest.want)
+			}
+		})
+	}
 ```
 
 ##### Benchmark Tests
