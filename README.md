@@ -35,6 +35,20 @@ Working through [Learn Go with Tests](https://quii.gitbook.io/learn-go-with-test
   ```
 - In formatted strings, using `v` as an example, `%v` will show the value in default format and `%#v` will show the Go syntax representation of the value ([link](https://pkg.go.dev/fmt#hdr-Printing))
 - Interface definition `type Something interface { SomeMethod() int }`
+- Use pointer receivers for methods, especially when you don't want the values to be copied, i.e. you want the original method instance to be changed
+- Create your own errors, e.g. `var ErrSomeProblem = errors.New("some error")`
+- Implement the `stringer` interface on things by making them implement the `String() string` method, then you can print them in format strings with the `%s` verb. This is useful when you create your own types, e.g.:
+
+```go
+type MyNumber int
+
+func (n MyNumber) String() string {
+  return fmt.Sprintf("%d is my number", n)
+}
+```
+
+- Consider creating assertion helper functions outside the tests, so anyone reading the tests can just see the basic assertions first then drill into the helpers later if necessary.
+- Helper functions can use the `t testing.TB` parameter to make them more flexible, i.e. can accept benchmark tests as well as unit tests
 
 #### Test Types
 
