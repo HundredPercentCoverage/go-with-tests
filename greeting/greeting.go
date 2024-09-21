@@ -7,15 +7,18 @@ import (
 	"net/http"
 )
 
-func Greet(writer io.Writer, msg string) {
-	fmt.Fprintf(writer, "hello %s", msg)
+func Greet(w io.Writer, str string) {
+	// Anything that implements io.Writer can be passed in as w
+	// e.g. os.Stdout, http.ResponseWriter, bytes.Buffer
+	// This is dependency injection somehow
+	fmt.Fprintf(w, "hello %s", str)
 }
 
-func MyHandler(w http.ResponseWriter, r *http.Request) {
+func MyGreeterHandler(w http.ResponseWriter, r *http.Request) {
 	Greet(w, "world")
 }
 
 func main() {
 	// Greet(os.Stdout, "potato")
-	log.Fatal(http.ListenAndServe(":8000", http.HandlerFunc(MyHandler)))
+	log.Fatal(http.ListenAndServe(":8000", http.HandlerFunc(MyGreeterHandler)))
 }
